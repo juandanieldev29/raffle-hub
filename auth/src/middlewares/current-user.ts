@@ -1,18 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { googleOAuthClient } from '../services/google-oauth-client';
-
-interface UserPayload {
-  id: string;
-  email: string;
-  name: string;
-  photoURL?: string;
-}
+import { getGoogleOAuthProfile, refreshGoogleToken } from '../services/google-oauth-profile';
+import { UserProfile } from '../types/user-profile';
 
 declare global {
   namespace Express {
     interface Request {
-      currentUser?: UserPayload;
+      currentUser?: UserProfile;
     }
   }
 }
@@ -22,21 +16,17 @@ export const currentUser = async (req: Request, res: Response, next: NextFunctio
     return next();
   }
   try {
-    const googleOAuth = await googleOAuthClient.verifyIdToken({
-      idToken: req.session.idToken,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    const userId = googleOAuth.getUserId();
-    const userInfo = googleOAuth.getPayload();
-    if (!userInfo?.email || !userInfo?.name || !userId) {
-      throw new Error('Could not retrieve user profile info');
+    const tokenExpirationTime = req.session.expiryDate;
+    const currentTimestamp = Date.now();
+    if (currentTimestamp > tokenExpirationTime) {
+      if (req.session.refreshToken) {
+        req.currentUser = await refreshGoogleToken(req.session.refreshToken);
+      }
+    } else {
+      req.currentUser = await getGoogleOAuthProfile(req.session.idToken);
     }
-    req.currentUser = {
-      id: userId,
-      email: userInfo.email,
-      name: userInfo.name,
-      photoURL: userInfo.picture,
-    };
-  } catch (err) {}
+  } catch (err) {
+    req.session = null;
+  }
   next();
 };
