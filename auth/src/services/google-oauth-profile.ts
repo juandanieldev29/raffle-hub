@@ -29,7 +29,7 @@ export const refreshGoogleToken = async (refreshToken: string): Promise<UserProf
   );
   const { credentials } = await user.refreshAccessToken();
   if (!credentials.id_token) {
-    throw new Error('ID Token not present in google oAuth process');
+    throw new Error('ID Token not present in google oAuth response');
   }
   return await getGoogleOAuthProfile(credentials.id_token);
 };
