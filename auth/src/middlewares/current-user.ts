@@ -4,6 +4,7 @@ import { getGoogleOAuthProfile, refreshGoogleToken } from '../services/google-oa
 import { UserProfile } from '../types/user-profile';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       currentUser?: UserProfile;
@@ -11,7 +12,7 @@ declare global {
   }
 }
 
-export const currentUser = async (req: Request, res: Response, next: NextFunction) => {
+export const currentUser = async (req: Request, _res: Response, next: NextFunction) => {
   if (!req.session?.idToken) {
     return next();
   }
@@ -26,6 +27,7 @@ export const currentUser = async (req: Request, res: Response, next: NextFunctio
       req.currentUser = await getGoogleOAuthProfile(req.session.idToken);
     }
   } catch (err) {
+    console.log(err);
     req.session = null;
   }
   next();
