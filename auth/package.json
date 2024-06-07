@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --poll src/index.ts",
-    "eslint": "eslint"
+    "dev": "ts-node-dev --poll src/index.ts"
   },
   "keywords": [],
   "author": "",
