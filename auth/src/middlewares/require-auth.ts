@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { NotAuthorizedError } from '../errors/not-authorized-error';
 
 export const requireAuth = (req: Request, _res: Response, next: NextFunction) => {
-  if (!req.currentUser) {
+  if (!req.session?.currentUser) {
     throw new NotAuthorizedError();
   }
   next();
