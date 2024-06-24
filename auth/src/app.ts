@@ -12,9 +12,9 @@ import { NotFoundError } from './errors/not-found-error';
 
 const app = express();
 app.set('trust proxy', true);
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({ credentials: true, origin: true, exposedHeaders: ['set-cookie'] }));
 app.use(json());
-app.use(cookieSession({ signed: false, secure: false }));
+app.use(cookieSession({ signed: false, secure: false, maxAge: 24 * 60 * 60 * 1000 }));
 
 app.use(currentUserRouter);
 app.use(signinRouter);
