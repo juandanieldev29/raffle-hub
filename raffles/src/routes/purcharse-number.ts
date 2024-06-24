@@ -56,7 +56,7 @@ router.post(
       number,
       serie,
       raffle,
-      buyer: req.currentUser!,
+      buyer: req.session!.currentUser,
     });
     await newTicket.save();
     raffle.tickets.push(newTicket);
