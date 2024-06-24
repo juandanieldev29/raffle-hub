@@ -1,22 +1,30 @@
 import { Document, Schema, Model, model } from 'mongoose';
 
+import { TicketDoc } from './ticket';
+import { UserProfile } from '../types/user-profile';
+
 interface RaffleAttrs {
-  userId: string;
+  owner: UserProfile;
   prize: number;
-  description?: string;
+  description: string;
   quantityNumbers?: number;
   quantitySeries?: number;
   ticketPrice: number;
 }
 
 export interface RaffleDoc extends Document {
-  userId: string;
+  owner: UserProfile;
   prize: number;
-  description?: string;
+  description: string;
   quantityNumbers: number;
   quantitySeries?: number;
   ticketPrice: number;
   complete: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  tickets: TicketDoc[];
+  boughtTickets: number;
+  lastAvailableNumber: number;
 }
 
 interface RaffleModel extends Model<RaffleDoc> {
@@ -25,9 +33,22 @@ interface RaffleModel extends Model<RaffleDoc> {
 
 const raffleSchema = new Schema(
   {
-    userId: {
-      type: String,
-      required: true,
+    owner: {
+      id: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      photoURL: {
+        type: String,
+      },
     },
     prize: {
       type: Number,
@@ -35,6 +56,7 @@ const raffleSchema = new Schema(
     },
     description: {
       type: String,
+      required: true,
     },
     quantityNumbers: {
       type: Number,
@@ -50,9 +72,12 @@ const raffleSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    tickets: [{ type: Schema.Types.ObjectId, ref: 'Ticket' }],
   },
   {
+    timestamps: true,
     toJSON: {
+      virtuals: true,
       transform(_, ret) {
         ret.id = ret._id;
         delete ret._id;
@@ -62,6 +87,14 @@ const raffleSchema = new Schema(
 );
 
 raffleSchema.set('versionKey', 'version');
+
+raffleSchema.virtual('boughtTickets').get(function () {
+  return this.tickets.length;
+});
+
+raffleSchema.virtual('lastAvailableNumber').get(function () {
+  return this.quantityNumbers - 1;
+});
 
 raffleSchema.statics.build = (attrs: RaffleAttrs) => {
   return new Raffle(attrs);

@@ -37,13 +37,10 @@ router.put(
     if (raffle.complete) {
       throw new BadRequestError('Cannot update completed raffles');
     }
-    if (raffle.userId !== req.currentUser!.id) {
+    if (raffle.owner.id !== req.session?.currentUser!.id) {
       throw new NotAuthorizedError();
     }
-    const ticketsBought = await Ticket.countDocuments({
-      $or: [{ raffle: { $exists: false } }, { raffle: null }],
-    });
-    if (ticketsBought > 0) {
+    if (raffle.tickets.length > 0) {
       throw new BadRequestError('Cannot update raffle when there are tickets already bought');
     }
     const { prize, quantityNumbers, quantitySeries, ticketPrice } = req.body;

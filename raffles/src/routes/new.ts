@@ -14,6 +14,7 @@ router.post(
   requireAuth,
   [
     body('prize').isInt({ gt: 0 }).withMessage('Prize must be greater than 0'),
+    body('description').not().isEmpty().withMessage('Description is required'),
     body('quantityNumbers')
       .optional()
       .isInt({ gt: 0 })
@@ -26,13 +27,14 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { prize, quantityNumbers, quantitySeries, ticketPrice } = req.body;
+    const { prize, quantityNumbers, quantitySeries, ticketPrice, description } = req.body;
     const raffle = Raffle.build({
       prize,
       quantityNumbers,
       quantitySeries,
       ticketPrice,
-      userId: '123',
+      description,
+      owner: req.session!.currentUser,
     });
     await raffle.save();
     res.status(201).send(raffle);

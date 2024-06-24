@@ -1,21 +1,22 @@
 import { Document, Schema, Model, model } from 'mongoose';
 
 import { RaffleDoc } from './raffle';
+import { UserProfile } from '../types/user-profile';
 
 interface TicketAttrs {
-  userId: string;
+  buyer: UserProfile;
   number: number;
-  serie: number;
+  serie?: number;
   raffle: RaffleDoc;
-  orderId: string;
 }
 
-interface TicketDoc extends Document {
-  userId: string;
+export interface TicketDoc extends Document {
+  buyer: UserProfile;
   number: number;
-  serie: number;
+  serie?: number;
   raffle: RaffleDoc;
-  orderId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface TicketModel extends Model<TicketDoc> {
@@ -24,9 +25,22 @@ interface TicketModel extends Model<TicketDoc> {
 
 const ticketSchema = new Schema(
   {
-    userId: {
-      type: String,
-      required: true,
+    buyer: {
+      id: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      photoURL: {
+        type: String,
+      },
     },
     number: {
       type: Number,
@@ -39,12 +53,9 @@ const ticketSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Raffle',
     },
-    orderId: {
-      type: String,
-      required: true,
-    },
   },
   {
+    timestamps: true,
     toJSON: {
       transform(_, ret) {
         ret.id = ret._id;
