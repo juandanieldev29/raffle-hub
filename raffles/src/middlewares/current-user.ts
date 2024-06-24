@@ -61,6 +61,13 @@ export const currentUser = async (req: Request, _res: Response, next: NextFuncti
         refreshToken: refreshedCredentials.refresh_token,
         expiryDate: refreshedCredentials.expiry_date,
       };
+      req.session = {
+        ...req.session,
+        idToken: refreshedCredentials.id_token,
+        accessToken: refreshedCredentials.access_token,
+        refreshToken: refreshedCredentials.refresh_token,
+        expiryDate: refreshedCredentials.expiry_date,
+      };
     }
     const loginTicket = await verifyIdToken(credentials.idToken);
     if (req.session.currentUser && req.session.currentUser.id === loginTicket.getUserId()) {
