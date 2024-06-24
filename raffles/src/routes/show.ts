@@ -3,13 +3,14 @@ import mongoose from 'mongoose';
 import { param } from 'express-validator';
 
 import { Raffle } from '../models/raffle';
-import { Ticket } from '../models/ticket';
+import { currentUser } from '../middlewares/current-user';
 import { NotFoundError } from '../errors/not-found-error';
 
 const router = express.Router();
 
 router.get(
-  '/api/raffles/:raffleId/available-numbers',
+  '/api/raffles/:raffleId',
+  currentUser,
   [
     param('raffleId')
       .not()
@@ -23,15 +24,11 @@ router.get(
     if (!raffle) {
       throw new NotFoundError();
     }
-    const tickets = await Ticket.find({ raffle }).select({ number: 1 });
-    const boughtNumbers = tickets.map((x) => x.number);
-    const availableNumbers = Array.from({ length: raffle.quantityNumbers }, (_, i) => i).filter(
-      (x) => {
-        return !boughtNumbers.includes(x);
-      },
-    );
-    res.send(availableNumbers);
+    if (raffle.owner.id === req.session?.currentUser?.id) {
+      await raffle.populate('tickets');
+    }
+    res.send(raffle);
   },
 );
 
-export { router as availableNumbersRaffleRouter };
+export { router as showRaffleRouter };

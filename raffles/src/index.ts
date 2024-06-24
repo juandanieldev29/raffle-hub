@@ -13,6 +13,8 @@ const start = async () => {
     throw new Error('MONGO_URI must be defined');
   }
   await mongoose.connect(process.env.MONGO_URI);
+  process.on('SIGINT', () => mongoose.disconnect());
+  process.on('SIGTERM', () => mongoose.disconnect());
   app.listen(3002, () => {
     console.log('Listening on port 3002!');
   });

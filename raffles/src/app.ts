@@ -6,7 +6,9 @@ import cookieSession from 'cookie-session';
 
 import { errorHandler } from './middlewares/error-handler';
 import { availableNumbersRaffleRouter } from './routes/available-numbers';
+import { purchaseNumberRouter } from './routes/purcharse-number';
 import { indexRaffleRouter } from './routes/index';
+import { showRaffleRouter } from './routes/show';
 import { createRaffleRouter } from './routes/new';
 import { updateRaffleRouter } from './routes/update';
 import { NotFoundError } from './errors/not-found-error';
@@ -18,7 +20,9 @@ app.use(json());
 app.use(cookieSession({ signed: false, secure: false }));
 
 app.use(availableNumbersRaffleRouter);
+app.use(purchaseNumberRouter);
 app.use(indexRaffleRouter);
+app.use(showRaffleRouter);
 app.use(createRaffleRouter);
 app.use(updateRaffleRouter);
 
