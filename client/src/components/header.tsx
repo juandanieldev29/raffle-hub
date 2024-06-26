@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
@@ -51,7 +50,7 @@ export default function Header() {
     }
   }, [darkMode]);
 
-  const sharedBarClass = 'h-1 bg-slate-50 dark:bg-slate-400 transition-all animation-delay-400';
+  const sharedBarClass = 'h-1 bg-slate-100 dark:bg-slate-400 transition-all animation-delay-400';
 
   const firstBarClass = classNames(sharedBarClass, {
     'translate-y-3.5 rotate-[-45deg]': menuOpen,
@@ -87,7 +86,7 @@ export default function Header() {
   });
 
   return (
-    <header className="flex justify-between p-2 shadow-md sticky bg-slate-950">
+    <header className="flex justify-between p-2 shadow-md sticky bg-slate-950 z-10">
       <h1 className="text-3xl md:text-5xl grow text-slate-50 dark:text-slate-400">RaffleHub</h1>
       <button className="text-slate-50 dark:text-slate-400 google-button" onClick={googleLogin}>
         Login
