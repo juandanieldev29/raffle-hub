@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import classNames from 'classnames';
 import { IRaffle } from '@/types/raffle';
-import { formatNumber, formatDate } from '@/utils/utils';
+import { formatNumber, formatDate } from '@/utils';
 
 interface RaffleCardProps {
   raffle: IRaffle;
@@ -30,11 +30,11 @@ export default function RaffleCard({
         {raffle.description}
       </h2>
       <p className="md:col-start-3 font-semibold">Precio del número</p>
-      <p className="text-sm font-extralight md:col-start-3 font-medium">
+      <p className="text-sm font-extralight md:col-start-3 font-medium" suppressHydrationWarning>
         {formatNumber(raffle.ticketPrice)}
       </p>
       <p className="md:col-start-3 font-semibold">Premio</p>
-      <p className="text-sm font-extralight md:col-start-3 font-medium">
+      <p className="text-sm font-extralight md:col-start-3 font-medium" suppressHydrationWarning>
         {formatNumber(raffle.prize)}
       </p>
       <p className="md:col-start-3 font-semibold">Números disponibles</p>
@@ -42,7 +42,7 @@ export default function RaffleCard({
         {raffle.quantityNumbers - raffle.boughtTickets}
       </p>
       <p className="md:col-start-3 font-semibold">Fecha de creación</p>
-      <p className="text-sm font-extralight md:col-start-3 font-medium">
+      <p className="text-sm font-extralight md:col-start-3 font-medium" suppressHydrationWarning>
         {formatDate(raffle.createdAt)}
       </p>
       <p className="md:col-start-3 font-semibold">Creado por</p>

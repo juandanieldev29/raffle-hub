@@ -1,8 +1,8 @@
 import { headers } from 'next/headers';
 import axios from 'axios';
 
-import RaffleCard from '@/components/raffle-card';
-import { formatNumber, formatDate, range } from '@/utils/utils';
+import RaffleCard from '@/components/raffles/raffle-card';
+import { formatNumber, formatDate, range, parseNextHeaders } from '@/utils';
 import { IRaffle } from '@/types/raffle';
 import { CurrentUser } from '@/types/current-user';
 
@@ -13,19 +13,16 @@ type RaffleDetails = {
 };
 
 async function fetchData(raffleId: string): Promise<RaffleDetails> {
-  const headersList = Array.from(headers().entries());
-  const headersObject = headersList.reduce((accumulator, [key, value]) => {
-    return { ...accumulator, [key]: value };
-  }, {});
+  const parsedHeaders = parseNextHeaders(headers().entries());
   const [{ data: raffle }, { data: availableNumbers }, { data: currentUserData }] =
     await Promise.all([
       axios.get<IRaffle>(`http://localhost:3002/api/raffles/${raffleId}`, {
-        headers: headersObject,
+        headers: parsedHeaders,
         withCredentials: true,
       }),
       axios.get<Array<number>>(`http://localhost:3002/api/raffles/${raffleId}/available-numbers`),
       axios.get<{ currentUser: CurrentUser | null }>('http://localhost:3001/api/auth/currentUser', {
-        headers: headersObject,
+        headers: parsedHeaders,
         withCredentials: true,
       }),
     ]);

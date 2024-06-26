@@ -18,3 +18,10 @@ export function formatDate(dateString: string) {
 export function range(start: number, stop: number, step: number) {
   return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
 }
+
+export function parseNextHeaders(headers: IterableIterator<[string, string]>) {
+  const headersList = Array.from(headers);
+  return headersList.reduce((accumulator, [key, value]) => {
+    return { ...accumulator, [key]: value };
+  }, {});
+}

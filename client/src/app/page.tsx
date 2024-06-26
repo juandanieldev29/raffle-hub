@@ -1,47 +1,31 @@
-'use client';
-import { useEffect, useState } from 'react';
+import { headers } from 'next/headers';
 import axios from 'axios';
 
-import RaffleCard from '@/components/raffle-card';
-import { IRaffle } from '@/types/raffle';
+import RaffleList from '@/components/raffles/raffle-list';
+import { parseNextHeaders } from '@/utils';
 import { RafflesPaginationResult } from '@/types/pagination';
 
-export default function Home() {
-  const [pageSize, setPageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rafflesMetadata, setRafflesMetadata] = useState<
-    RafflesPaginationResult['metadata'] | null
-  >(null);
-  const [raffles, setRaffles] = useState<Array<IRaffle>>([]);
+type RafflesList = {
+  rafflesPaginated: RafflesPaginationResult;
+};
 
-  const fetchRaffles = async () => {
-    const { data } = await axios.get<RafflesPaginationResult>('http://localhost:3002/api/raffles', {
-      params: {
-        page: currentPage,
-        pageSize,
-      },
+async function fetchData(): Promise<RafflesList> {
+  const parsedHeaders = parseNextHeaders(headers().entries());
+  const [{ data: rafflesPaginated }] = await Promise.all([
+    axios.get<RafflesPaginationResult>('http://localhost:3002/api/raffles', {
+      headers: parsedHeaders,
       withCredentials: true,
-    });
-    setRafflesMetadata(data.metadata);
-    setRaffles(data.raffles);
-  };
+    }),
+  ]);
+  return { rafflesPaginated };
+}
 
-  useEffect(() => {
-    fetchRaffles();
-  }, [currentPage, pageSize]);
+export default async function Home() {
+  const { rafflesPaginated } = await fetchData();
 
   return (
     <main className="mt-8 text-slate-700 dark:text-slate-200">
-      {raffles.map((raffle) => {
-        return (
-          <RaffleCard
-            key={raffle.id}
-            raffle={raffle}
-            includeLinkToDetails
-            disableAnimations={false}
-          />
-        );
-      })}
+      <RaffleList rafflesPaginated={rafflesPaginated} />
     </main>
   );
 }
