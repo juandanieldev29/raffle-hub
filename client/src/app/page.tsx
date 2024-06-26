@@ -10,21 +10,18 @@ export default function Home() {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [rafflesMetadata, setRafflesMetadata] = useState<
-    RafflesPaginationResult<IRaffle>['metadata'] | null
+    RafflesPaginationResult['metadata'] | null
   >(null);
   const [raffles, setRaffles] = useState<Array<IRaffle>>([]);
 
   const fetchRaffles = async () => {
-    const { data } = await axios.get<RafflesPaginationResult<IRaffle>>(
-      'http://localhost:3002/api/raffles',
-      {
-        params: {
-          page: currentPage,
-          pageSize,
-        },
-        withCredentials: true,
+    const { data } = await axios.get<RafflesPaginationResult>('http://localhost:3002/api/raffles', {
+      params: {
+        page: currentPage,
+        pageSize,
       },
-    );
+      withCredentials: true,
+    });
     setRafflesMetadata(data.metadata);
     setRaffles(data.raffles);
   };

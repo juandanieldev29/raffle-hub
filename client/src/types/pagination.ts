@@ -1,6 +1,8 @@
-export interface RafflesPaginationResult<T> {
+import { IRaffle } from '@/types/raffle';
+
+export interface RafflesPaginationResult {
   metadata: {
     count: number;
   };
-  raffles: T[];
+  raffles: IRaffle[];
 }
