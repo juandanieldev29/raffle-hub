@@ -9,7 +9,7 @@ import { requireAuth } from '../middlewares/require-auth';
 const router = express.Router();
 
 router.post(
-  '/api/raffles',
+  '/api/raffle',
   currentUser,
   requireAuth,
   [

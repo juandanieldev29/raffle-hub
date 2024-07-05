@@ -9,7 +9,7 @@ interface Pagination {
   pageSize?: number;
 }
 
-router.get('/api/raffles', async (req: Request<{}, {}, {}, Pagination>, res: Response) => {
+router.get('/api/raffle', async (req: Request<{}, {}, {}, Pagination>, res: Response) => {
   const { page = 1, pageSize = 10 } = req.query;
   const [raffles, count] = await Promise.all([
     Raffle.find({
