@@ -9,7 +9,7 @@ import { NotFoundError } from '../errors/not-found-error';
 const router = express.Router();
 
 router.get(
-  '/api/raffles/:raffleId',
+  '/api/raffle/:raffleId',
   currentUser,
   [
     param('raffleId')

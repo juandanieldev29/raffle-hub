@@ -1,18 +1,22 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
-import RaffleCard from '@/components/raffles/raffle-card';
+import { useEffect, useState, useRef, useContext } from 'react';
+import RaffleCard from '@/components/raffle/raffle-card';
 import Pagination from '@/components/pagination';
 import { IRaffle } from '@/types/raffle';
 import { RafflesPaginationResult } from '@/types/pagination';
+
+import { INITIAL_PAGE, INITIAL_PAGE_SIZE } from '@/utils/constants';
+import { UserContext } from '@/contexts/user-context';
 
 interface RaffleListProps {
   rafflesPaginated: RafflesPaginationResult;
 }
 
-export default function RaffleList({ rafflesPaginated }: RaffleListProps) {
-  const [pageSize, setPageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+export default function RaffleIndex({ rafflesPaginated }: RaffleListProps) {
+  const [_, setCurrentUser] = useContext(UserContext);
+
+  const [pageSize, setPageSize] = useState(INITIAL_PAGE_SIZE);
+  const [currentPage, setCurrentPage] = useState(INITIAL_PAGE);
   const [rafflesMetadata, setRafflesMetadata] = useState<
     RafflesPaginationResult['metadata'] | null
   >(rafflesPaginated.metadata);
@@ -20,15 +24,20 @@ export default function RaffleList({ rafflesPaginated }: RaffleListProps) {
   const pageInitiallyRendered = useRef(false);
 
   const fetchRaffles = async () => {
-    const { data } = await axios.get<RafflesPaginationResult>('http://localhost:3002/api/raffles', {
-      params: {
-        page: currentPage,
-        pageSize,
-      },
-      withCredentials: true,
+    const res = await fetch(`/api/raffle?page=${currentPage}&pageSize=${pageSize}`, {
+      cache: 'no-store',
     });
+    const data = await res.json();
     setRafflesMetadata(data.metadata);
     setLocalRaffles(data.raffles);
+  };
+
+  const fetchCurrentUser = async () => {
+    const response = await fetch('/api/auth/currentuser', {
+      cache: 'no-store',
+    });
+    const { currentUser: user } = await response.json();
+    setCurrentUser(user);
   };
 
   useEffect(() => {
@@ -38,6 +47,10 @@ export default function RaffleList({ rafflesPaginated }: RaffleListProps) {
     }
     pageInitiallyRendered.current = true;
   }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
 
   return (
     <>

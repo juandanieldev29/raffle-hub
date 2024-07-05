@@ -1,39 +1,36 @@
-import { headers } from 'next/headers';
-import axios from 'axios';
+'use client';
+import { useEffect, useContext } from 'react';
 
-import RaffleCard from '@/components/raffles/raffle-card';
-import { formatNumber, formatDate, range, parseNextHeaders } from '@/utils';
+import RaffleCard from '@/components/raffle/raffle-card';
+import { UserContext } from '@/contexts/user-context';
+import { formatNumber, formatDate, range } from '@/utils';
 import { IRaffle } from '@/types/raffle';
 import { CurrentUser } from '@/types/current-user';
 
-type RaffleDetails = {
+type RaffleShowProps = {
   currentUser: CurrentUser | null;
   raffle: IRaffle;
   availableNumbers: Array<number>;
 };
 
-async function fetchData(raffleId: string): Promise<RaffleDetails> {
-  const parsedHeaders = parseNextHeaders(headers().entries());
-  const [{ data: raffle }, { data: availableNumbers }, { data: currentUserData }] =
-    await Promise.all([
-      axios.get<IRaffle>(`http://localhost:3002/api/raffles/${raffleId}`, {
-        headers: parsedHeaders,
-        withCredentials: true,
-      }),
-      axios.get<Array<number>>(`http://localhost:3002/api/raffles/${raffleId}/available-numbers`),
-      axios.get<{ currentUser: CurrentUser | null }>('http://localhost:3001/api/auth/currentUser', {
-        headers: parsedHeaders,
-        withCredentials: true,
-      }),
-    ]);
-  return { raffle, availableNumbers, currentUser: currentUserData.currentUser };
-}
+export default function RaffleShow({ raffle, currentUser, availableNumbers }: RaffleShowProps) {
+  const [_, setCurrentUser] = useContext(UserContext);
 
-export default async function RaffleShow({ params }: { params: { raffleId: string } }) {
-  const { raffle, availableNumbers, currentUser } = await fetchData(params.raffleId);
+  const fetchCurrentUser = async () => {
+    const response = await fetch('/api/auth/currentuser', {
+      cache: 'no-store',
+    });
+    const { currentUser: user } = await response.json();
+    setCurrentUser(user);
+  };
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
   return (
     <main className="mt-8 text-slate-700 dark:text-slate-200">
-      <h1 className="w-[95%] md:w-11/12 mx-auto mb-8 text-5xl">Raffle Details</h1>
+      <h1 className="w-[95%] md:w-11/12 mx-auto mb-8 text-5xl">Información acerca de la rifa</h1>
       <RaffleCard raffle={raffle} />
       <h2 className="w-[95%] md:w-11/12 mx-auto mb-8 text-3xl font-medium">
         Números disponibles para compra

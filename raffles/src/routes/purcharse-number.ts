@@ -13,7 +13,7 @@ import { BadRequestError } from '../errors/bad-request-error';
 const router = express.Router();
 
 router.post(
-  '/api/raffles/:raffleId/purchase-number',
+  '/api/raffle/:raffleId/purchase-number',
   currentUser,
   requireAuth,
   [

@@ -1,11 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+
+import { UserContext } from '@/contexts/user-context';
 
 export default function Header() {
+  const [currentUser, setCurrentUser] = useContext(UserContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -23,13 +25,17 @@ export default function Header() {
   };
 
   const exchangeGoogleToken = async (code: string) => {
-    await axios.post(
-      'http://localhost:3001/api/auth/google',
-      {
-        code,
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      { withCredentials: true },
-    );
+      credentials: 'include',
+      cache: 'no-store',
+      body: JSON.stringify({ code }),
+    });
+    const user = await res.json();
+    setCurrentUser(user);
   };
 
   const googleLogin = useGoogleLogin({
@@ -88,9 +94,13 @@ export default function Header() {
   return (
     <header className="flex justify-between p-2 shadow-md sticky bg-slate-950 z-10">
       <h1 className="text-3xl md:text-5xl grow text-slate-50 dark:text-slate-400">RaffleHub</h1>
-      <button className="text-slate-50 dark:text-slate-400 google-button" onClick={googleLogin}>
-        Login
-      </button>
+      {currentUser ? (
+        <img src={currentUser.photoURL} className="w-8 h-8 my-auto rounded-full" />
+      ) : (
+        <button className="text-slate-50 dark:text-slate-400 google-button" onClick={googleLogin}>
+          Login
+        </button>
+      )}
       <div className="px-2 cursor-pointer text-slate-50 dark:text-slate-400 my-auto">
         <i className={toggleThemeClass} onClick={toggleDarkMode} />
       </div>
@@ -116,16 +126,16 @@ export default function Header() {
                 onClick={toggleMenu}
                 className="text-4xl transition-all font-thin text-slate-100 dark:text-slate-400 md:hover:font-normal md:hover:border-b"
               >
-                Raffles
+                Rifas
               </Link>
             </li>
             <li className="my-4">
               <Link
-                href="/raffles/new"
+                href="/raffle/new"
                 onClick={toggleMenu}
                 className="text-4xl transition-all font-thin text-slate-100 dark:text-slate-400 md:hover:font-normal md:hover:border-b"
               >
-                Create new raffle
+                Crear nueva rifa
               </Link>
             </li>
           </ul>
