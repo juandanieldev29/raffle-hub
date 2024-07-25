@@ -52,10 +52,6 @@ export default function RaffleIndex({ rafflesPaginated }: RaffleListProps) {
     pageInitiallyRendered.current = true;
   }, [currentPage, pageSize]);
 
-  useEffect(() => {
-    fetchCurrentUser();
-  }, []);
-
   return (
     <>
       {localRaffles.map((raffle) => {
