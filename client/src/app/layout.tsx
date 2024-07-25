@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-slate-100 dark:bg-slate-700`}>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+        <GoogleOAuthProvider clientId="822068828971-84m1l68k8h0bhn3edkom8udrqka2dm80.apps.googleusercontent.com">
           <UserContextProvider>
             <Header />
             {children}
