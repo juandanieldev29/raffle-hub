@@ -24,12 +24,16 @@ export default function RaffleIndex({ rafflesPaginated }: RaffleListProps) {
   const pageInitiallyRendered = useRef(false);
 
   const fetchRaffles = async () => {
-    const res = await fetch(`/api/raffle?page=${currentPage}&pageSize=${pageSize}`, {
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `https://3fkh6p4tm6.execute-api.us-west-2.amazonaws.com/prod/raffle?page=${currentPage}&pageSize=${pageSize}`,
+      {
+        cache: 'no-store',
+      },
+    );
     const data = await res.json();
-    setRafflesMetadata(data.metadata);
-    setLocalRaffles(data.raffles);
+    setLocalRaffles(data);
+    // setRafflesMetadata(data.metadata);
+    // setLocalRaffles(data.raffles);
   };
 
   const fetchCurrentUser = async () => {
