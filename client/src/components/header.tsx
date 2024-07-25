@@ -25,7 +25,7 @@ export default function Header() {
   };
 
   const exchangeGoogleToken = async (code: string) => {
-    const res = await fetch('/api/auth/google', {
+    const res = await fetch('https://4aea9d50xa.execute-api.us-west-2.amazonaws.com/prod/auth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
