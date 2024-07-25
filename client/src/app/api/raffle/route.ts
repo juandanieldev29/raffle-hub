@@ -1,9 +1,12 @@
 export async function GET(request: Request): Promise<Response> {
   const searchParams = new URL(request.url).searchParams;
-  const res = await fetch(`http://localhost:3002/api/raffle?${searchParams}`, {
-    headers: request.headers,
-    cache: 'no-store',
-  });
+  const res = await fetch(
+    `https://3fkh6p4tm6.execute-api.us-west-2.amazonaws.com/prod/raffle?${searchParams}`,
+    {
+      headers: request.headers,
+      cache: 'no-store',
+    },
+  );
   const data = await res.json();
   return Response.json(data);
 }

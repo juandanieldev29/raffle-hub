@@ -5,7 +5,7 @@ import { INITIAL_PAGE, INITIAL_PAGE_SIZE } from '@/utils/constants';
 
 export default async function Home() {
   const res = await fetch(
-    `http://localhost:3000/api/raffle?page=${INITIAL_PAGE}&pageSize=${INITIAL_PAGE_SIZE}`,
+    `https://3fkh6p4tm6.execute-api.us-west-2.amazonaws.com/prod/raffle?page=${INITIAL_PAGE}&pageSize=${INITIAL_PAGE_SIZE}`,
     {
       headers: headers(),
       cache: 'no-store',
@@ -15,7 +15,12 @@ export default async function Home() {
 
   return (
     <main className="mt-8 text-slate-700 dark:text-slate-200">
-      <RaffleList rafflesPaginated={rafflesPaginated} />
+      <RaffleList
+        rafflesPaginated={{
+          raffles: rafflesPaginated,
+          metadata: { count: rafflesPaginated.length },
+        }}
+      />
     </main>
   );
 }
