@@ -5,7 +5,7 @@ import { INITIAL_PAGE, INITIAL_PAGE_SIZE } from '@/utils/constants';
 
 export default async function Home() {
   const res = await fetch(
-    `https://3fkh6p4tm6.execute-api.us-west-2.amazonaws.com/prod/raffle?page=${INITIAL_PAGE}&pageSize=${INITIAL_PAGE_SIZE}`,
+    `https://api.raffle-hub.net/raffle/raffle?page=${INITIAL_PAGE}&pageSize=${INITIAL_PAGE_SIZE}`,
     {
       headers: headers(),
       cache: 'no-store',

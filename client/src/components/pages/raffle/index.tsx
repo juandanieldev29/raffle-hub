@@ -25,7 +25,7 @@ export default function RaffleIndex({ rafflesPaginated }: RaffleListProps) {
 
   const fetchRaffles = async () => {
     const res = await fetch(
-      `https://3fkh6p4tm6.execute-api.us-west-2.amazonaws.com/prod/raffle?page=${currentPage}&pageSize=${pageSize}`,
+      `https://api.raffle-hub.net/raffle/raffle?page=${currentPage}&pageSize=${pageSize}`,
       {
         cache: 'no-store',
       },
